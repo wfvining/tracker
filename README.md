@@ -11,15 +11,15 @@ complete them.
 For example the judge sentences you to 50 hours of community
 service. Simply create a task.
 
-> $ tracker add community-service 50
+ $ tracker add community-service 50
 
 When you get home from working on the litter crew:
 
-> $ tracker advance community-service 4
+ $ tracker advance community-service 4
 
 Check your standing.
 
-> $ tracker view community-service
+ $ tracker view community-service
 
 (Idea: add tracker to your init file so every time you log in you are
 reminded of your debt to society!)
@@ -31,8 +31,8 @@ directory.
 
 # Setup
 
-> $ ghc --make tracker.hs
-> $ mv tracker $SOMEWHERE_IN_MY_PATH
+ $ ghc --make tracker.hs
+ $ mv tracker $SOMEWHERE_IN_MY_PATH
 
 # Usage
 
@@ -40,43 +40,43 @@ The basic Tracker commands are 'add', 'ammend', 'advance', 'view', and 'remove'.
 
 ## Add a New Task
 
->  add <task-name> <sub-tasks> : create a new task
+ add <task-name> <sub-tasks> : create a new task
 
-    <task-name> is a the name of the new task.
-    <sub-tasks> is an integer giving the number of sub-tasks for completion.
+<task-name> is a the name of the new task.
+<sub-tasks> is an integer giving the number of sub-tasks for completion.
 
-    NOTE: It is an error to provide anything other than and integer;
-    however, Tracker will still create the task (this is a bug). When
-    you try to advance such a task everything will blow up in your
-    face...
+NOTE: It is an error to provide anything other than and integer;
+however, Tracker will still create the task (this is a bug). When
+you try to advance such a task everything will blow up in your
+face...
 
 ## Change the Number of Sub-Tasks
 
->  ammend <task-name> <new-sub-task-count> : change the number of sub-tasks
+ ammend <task-name> <new-sub-task-count> : change the number of sub-tasks
 
 ## Note Progress
 
->  advance <task-name> <amount-to-advance> [optional comment]
+ advance <task-name> <amount-to-advance> [optional comment]
     
-    <task-name> is the name of the task. duh.
-    <amount-to-advance> an integer, the number of subtasks to 'tick off'
+<task-name> is the name of the task. duh.
+<amount-to-advance> an integer, the number of subtasks to 'tick off'
 
-    An optional comment may be provided to be stored with the amount
-    of the advance, describing what you did and how you feel about it.
+An optional comment may be provided to be stored with the amount
+of the advance, describing what you did and how you feel about it.
 
 ## View Progress
 
->  view <task-name>
+ view <task-name>
 
-    Show stats about a task, the percent completed and the number of
-    remaining sub-tasks.
+Show stats about a task, the percent completed and the number of
+remaining sub-tasks.
 
 ## Remove a Task
 
->  remove [-q] <task-name>
+ remove [-q] <task-name>
 
-    Delete a task. If the -q option is not provided will prompt user
-    for confirmation.
+Delete a task. If the -q option is not provided will prompt user
+for confirmation.
 
 # To Do
 
