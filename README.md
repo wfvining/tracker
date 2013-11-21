@@ -53,6 +53,7 @@ add <task-name> <sub-tasks> : create a new task
 ```
 
 `<task-name>` is a the name of the new task.
+
 `<sub-tasks>` is an integer giving the number of sub-tasks for completion.
 
 NOTE: It is an error to provide anything other than and integer;
@@ -73,7 +74,9 @@ face...
 ```
  
 `<task-name>` is the name of the task. duh.
+
 `<amount-to-advance>` an integer, the number of subtasks to 'tick off'
+
 
 An optional comment may be provided to be stored with the amount
 of the advance, describing what you did and how you feel about it.
