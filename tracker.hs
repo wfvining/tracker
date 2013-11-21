@@ -62,6 +62,20 @@ view (taskName:[]) = do
     putStrLn $ summarize contents
   else putStrLn ""
 
+-- Show a list of available tasks.
+-- An available task is on that resides in the current directory.
+viewAll = do
+  files <- getDirectoryContents "."
+  mapM_ (\f -> do putStr "  " 
+                  putStrLn f) $ getTasks files
+      where getTasks = 
+                map (tail . (\f -> reverse . (drop 4) . reverse $ f))
+                    . filter isTrackerFile
+            isTrackerFile ('.':fname) = if take 4 (reverse fname) == "rkt."
+                                        then True
+                                        else False
+            isTrackerFile fname       = False
+
 -- Very rough and extremely inneficient.
 -- TODO: save comment.
 --       timestamp.
@@ -96,6 +110,12 @@ ammend [taskName,newAmt] = do
   renameFile tempName tf
 
 main = do
-  (command:args) <- getArgs
-  let (Just action) = lookup command dispatch
-  action args
+  args <- getArgs
+  case args of
+    (command:args) -> do
+        let (Just action) = lookup command dispatch
+        action args
+    [] -> do
+         putStrLn "Available tasks:"
+         viewAll
+

@@ -96,6 +96,18 @@ remaining sub-tasks.
 remove [-q] <task-name>
 ```
 
+## List
+
+To get a list of available tasks simply run tracker with no arguments.
+
+```
+$ tracker
+Available tasks:
+  foo
+  bar
+  ...
+```
+
 Delete a task. If the -q option is not provided will prompt user
 for confirmation.
 
@@ -103,11 +115,11 @@ for confirmation.
 
 This is version 0.1 (maybe lower). Much remains to be done including:
 
-- Pretty printing and progress bars for view.
-- List functionality
-- Fix that bug in 'add'
-- Consider allowing fractional tasks to track time instead of fixing that bug.
-- view all tasks in a directory and their status.
+- [ ] Pretty printing and progress bars for view.
+- [x] List all tasks.
+- [ ] Fix that bug in 'add'
+- [ ] Consider allowing fractional tasks to track time instead of fixing that bug.
+- [ ] view all tasks in a directory and their status.
 
 
   
