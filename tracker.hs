@@ -61,13 +61,16 @@ view (taskName:[]) = do
     contents <- readFile taskFile
     putStrLn $ summarize contents
   else putStrLn ""
+view [] = do viewAll
 
 -- Show a list of available tasks.
 -- An available task is on that resides in the current directory.
 viewAll = do
   files <- getDirectoryContents "."
   mapM_ (\f -> do putStr "  " 
-                  putStrLn f) $ getTasks files
+                  putStr f
+                  putStr ": "
+                  view [f]) $ getTasks files
       where getTasks = 
                 map (tail . (\f -> reverse . (drop 4) . reverse $ f))
                     . filter isTrackerFile
