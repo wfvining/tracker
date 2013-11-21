@@ -84,11 +84,11 @@ of the advance, describing what you did and how you feel about it.
 ## View Progress
 
 ```
-view <task-name>
+view [<task-name>]
 ```
 
 Show stats about a task, the percent completed and the number of
-remaining sub-tasks.
+remaining sub-tasks. When called without a task name the status of all available tasks is displayed.
 
 ## Remove a Task
 
@@ -119,7 +119,7 @@ This is version 0.1 (maybe lower). Much remains to be done including:
 - [x] List all tasks.
 - [ ] Fix that bug in 'add'
 - [ ] Consider allowing fractional tasks to track time instead of fixing that bug.
-- [ ] view all tasks in a directory and their status.
+- [x] view all tasks in a directory and their status.
 
 
   
