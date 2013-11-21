@@ -29,17 +29,17 @@ $ tracker view pennance
 
 Let's say you loose it one day and start throwing litter at the passing 
 cars. For this the judge gives you an additional 10 hours. You can
-ammend your pennance task to accomodate this.
+amend your pennance task to accomodate this.
 
 ```
-$ tracker ammend pennance +10
+$ tracker amend pennance +10
 ```
 
 Subsequently you see the error in your ways and a kinder judge decides
 you were judged too harshly, removing 5 hours from you sentence.
 
 ```
-$ tracker ammend pennance -5
+$ tracker amend pennance -5
 ```
 
 Tasks reside in particular directories, so you can create tasks for
@@ -56,7 +56,7 @@ $ mv tracker $SOMEWHERE_IN_MY_PATH
 
 ## Usage
 
-The basic Tracker commands are 'add', 'ammend', 'advance', 'view', and 'remove'.
+The basic Tracker commands are 'add', 'amend', 'advance', 'view', and 'remove'.
 
 ### Add a New Task
 
@@ -71,7 +71,7 @@ add <task-name> <sub-tasks>
 ### Change the Number of Sub-Tasks
 
 ```
-ammend <task-name> [+|-]<new-sub-task-count>
+amend <task-name> [+|-]<new-sub-task-count>
 ```
 
 If `<new-sub-task-count>` is prefixed by `+` then the number of sub-tasks

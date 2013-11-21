@@ -14,7 +14,7 @@ dispatch = [("add", add),
             ("remove", remove),
             ("view", view),
             ("advance", advance),
-            ("ammend", ammend)]
+            ("amend", amend)]
 
 -- A task file name is "."++taskName++".tkr"
 taskToFile :: String -> String
@@ -48,7 +48,7 @@ remove ["-q", taskName] = do
 -- take 5 is a janky way of rounding to 2 decimal places if we get
 -- into the 100% complete range this will be problematic, but if
 -- your tasks are that complete I think your problems are bigger than
--- mine. That's why ammend exists
+-- mine. That's why amend exists
 summarize :: String -> String
 summarize str =
     (take 5 (show $ (cur / target) * 100)) ++ "% complete with " 
@@ -102,14 +102,14 @@ advance (taskName:amount:comment) = do
   removeFile tf
   renameFile tempName tf
 
-ammend [taskName,newAmt] = do
+amend [taskName,newAmt] = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
   (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
   contents <- hGetContents handle
   let (cur:rest) = lines contents
   hPutStr tempHandle $ unlines ((newAmt:rest) 
-                                ++ ["0 Ammend " ++ cur ++ "->" ++ newAmt])
+                                ++ ["0 Amend " ++ cur ++ "->" ++ newAmt])
   hClose handle
   hClose tempHandle
   removeFile tf
