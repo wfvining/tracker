@@ -16,6 +16,7 @@ dispatch = [("add", add),
             ("advance", advance),
             ("ammend", ammend)]
 
+-- A task file name is "."++taskName++".tkr"
 taskToFile :: String -> String
 -- I have serious problems :-)
 taskToFile = ('.':) . flip (++) ".tkr"
@@ -44,9 +45,13 @@ remove [taskName] = do
 remove ["-q", taskName] = do
   removeFile $ taskToFile taskName
 
+-- take 5 is a janky way of rounding to 2 decimal places if we get
+-- into the 100% complete range this will be problematic, but if
+-- your tasks are that complete I think your problems are bigger than
+-- mine. That's why ammend exists
 summarize :: String -> String
 summarize str =
-    (show $ round $ (cur / target) * 100) ++ "% complete with " 
+    (take 5 (show $ (cur / target) * 100)) ++ "% complete with " 
                                               ++ (show $ target - cur)
                                               ++ " tasks remaining."
         where (tgt:cv:_) = lines str
