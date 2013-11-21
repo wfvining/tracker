@@ -46,12 +46,12 @@ remove ["-q", taskName] = do
 
 summarize :: String -> String
 summarize str =
-    (show $ floor $ (cur / target) * 100) ++ "% complete with " 
+    (show $ round $ (cur / target) * 100) ++ "% complete with " 
                                               ++ (show $ target - cur)
                                               ++ " tasks remaining."
         where (tgt:cv:_) = lines str
-              cur        = read cv
-              target     = read tgt
+              cur        = read cv :: Float
+              target     = read tgt :: Float
 
 view (taskName:[]) = do
   let taskFile = taskToFile taskName
@@ -88,12 +88,10 @@ advance (taskName:amount:comment) = do
   (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
   contents <- hGetContents handle
   let (tgt:cv:updates) = lines contents
-      cur = read cv
-      add = read amount
-  hPutStrLn tempHandle $ unlines $ (tgt:(show (cur+add)):updates) 
-                ++ [(amount ++ " " ++ map (\c -> if c == '\n' 
-                                                 then ' ' 
-                                                 else c) (unlines comment))]
+      cur = read cv :: Float
+      add = read amount :: Float
+  hPutStr tempHandle $ unlines $ (tgt:(show (cur+add)):updates) 
+                ++ [amount ++ (' ':(unwords comment))]
   hClose handle
   hClose tempHandle
   removeFile tf

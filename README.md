@@ -1,4 +1,4 @@
-Tracker
+\Tracker
 =======
 
 Tracker is a simple task tracker system.
@@ -117,8 +117,8 @@ This is version 0.1 (maybe lower). Much remains to be done including:
 
 - [ ] Pretty printing and progress bars for view.
 - [x] List all tasks.
-- [ ] Fix that bug in 'add'
-- [ ] Consider allowing fractional tasks to track time instead of fixing that bug.
+- [ ] ~~Fix that bug in 'add'~~
+- [x] Consider allowing fractional tasks to track time instead of fixing that bug.
 - [x] view all tasks in a directory and their status.
 
 
