@@ -84,9 +84,9 @@ viewAll = do
                                         else False
             isTrackerFile fname       = False
 
--- Very rough and extremely inneficient.
--- TODO: save comment.
---       timestamp.
+-- Note progress on a task, recording the new level of completion and
+-- logging the change.
+-- TODO: Add a timestamp.
 advance (taskName:amount:comment) = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
@@ -102,6 +102,32 @@ advance (taskName:amount:comment) = do
   removeFile tf
   renameFile tempName tf
 
+amend [taskName,('+':adj)] = do
+  let tf = taskToFile taskName
+  handle <- openFile tf ReadMode
+  (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
+  contents <- hGetContents handle
+  let (tgt:rest) = lines contents
+      tgt' = (read tgt :: Float) + (read adj :: Float)
+  hPutStr tempHandle $ unlines (((show tgt'):rest) 
+                                ++ ["0 Amend " ++ tgt ++ "->" ++ (show tgt')])
+  hClose handle
+  hClose tempHandle
+  removeFile tf
+  renameFile tempName tf
+amend [taskName,('-':adj)] = do
+  let tf = taskToFile taskName
+  handle <- openFile tf ReadMode
+  (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
+  contents <- hGetContents handle
+  let (tgt:rest) = lines contents
+      tgt' = (read tgt :: Float) - (read adj :: Float)
+  hPutStr tempHandle $ unlines (((show tgt'):rest) 
+                                ++ ["0 Amend " ++ tgt ++ "->" ++ (show tgt')])
+  hClose handle
+  hClose tempHandle
+  removeFile tf
+  renameFile tempName tf
 amend [taskName,newAmt] = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
