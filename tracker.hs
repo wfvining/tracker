@@ -88,19 +88,11 @@ viewAll = do
 -- logging the change.
 -- TODO: Add a timestamp.
 advance (taskName:amount:comment) = do
-  let tf = taskToFile taskName
-  handle <- openFile tf ReadMode
-  (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
-  contents <- hGetContents handle
-  let (tgt:cv:updates) = lines contents
-      cur = read cv :: Float
-      add = read amount :: Float
-  hPutStr tempHandle $ unlines $ (tgt:(show (cur+add)):updates) 
-                ++ [amount ++ (' ':(unwords comment))]
-  hClose handle
-  hClose tempHandle
-  removeFile tf
-  renameFile tempName tf
+  editTask
+    taskName
+    id
+    ((+) (read amount :: Float))
+    (\_ _ _ _ -> (amount ++ (' ':(unwords comment))))
 
 editTask :: String -> (Float -> Float) -> (Float -> Float) ->
             (String -> String -> String -> String -> String) -> IO ()
@@ -114,38 +106,29 @@ editTask taskName tgtProc curProc noteProc = do
       cur' = show $ curProc (read cur :: Float)
   hPutStr tempHandle $ unlines $ (tgt':cur':updates)
     ++ [noteProc tgt tgt' cur cur']
+  hClose handle
+  hClose tempHandle
+  removeFile tf
+  renameFile tempName tf
 
 amend [taskName,('+':adj)] = do
   editTask 
     taskName
-    id -- (\tgt -> ((+) (read adj :: Float))) --? why...
+    ((+) (read adj :: Float))
     id
     (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
 amend [taskName,('-':adj)] = do
-  let tf = taskToFile taskName
-  handle <- openFile tf ReadMode
-  (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
-  contents <- hGetContents handle
-  let (tgt:rest) = lines contents
-      tgt' = (read tgt :: Float) - (read adj :: Float)
-  hPutStr tempHandle $ unlines (((show tgt'):rest) 
-                                ++ ["0 Amend " ++ tgt ++ "->" ++ (show tgt')])
-  hClose handle
-  hClose tempHandle
-  removeFile tf
-  renameFile tempName tf
+  editTask
+    taskName
+    ((flip (-)) (read adj :: Float))
+    id
+    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
 amend [taskName,newAmt] = do
-  let tf = taskToFile taskName
-  handle <- openFile tf ReadMode
-  (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
-  contents <- hGetContents handle
-  let (cur:rest) = lines contents
-  hPutStr tempHandle $ unlines ((newAmt:rest) 
-                                ++ ["0 Amend " ++ cur ++ "->" ++ newAmt])
-  hClose handle
-  hClose tempHandle
-  removeFile tf
-  renameFile tempName tf
+  editTask
+    taskName
+    (\_ -> (read newAmt :: Float))
+    id
+    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
 
 main = do
   args <- getArgs
