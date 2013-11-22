@@ -12,34 +12,35 @@ For example the judge sentences you to 50 hours of community
 service. Simply create a task.
 
 ```
-$ tracker add pennance 50
+$ tracker add penance 50
 ```
 
 When you get home from working on the litter crew:
 
 ```
-$ tracker advance pennance 4
+$ tracker advance penance 4
 ```
 
 Check your standing.
 
 ```
-$ tracker view pennance
+$ tracker view penance
+8.0% complete with 46.0 tasks remaining.
 ```
 
 Let's say you loose it one day and start throwing litter at the passing 
 cars. For this the judge gives you an additional 10 hours. You can
-amend your pennance task to accomodate this.
+amend your penance task to accomodate this.
 
 ```
-$ tracker amend pennance +10
+$ tracker amend penance +10
 ```
 
 Subsequently you see the error in your ways and a kinder judge decides
-you were judged too harshly, removing 5 hours from you sentence.
+you were sentenced too harshly, removing 5 hours from you sentence.
 
 ```
-$ tracker amend pennance -5
+$ tracker amend penance -5
 ```
 
 Tasks reside in particular directories, so you can create tasks for
