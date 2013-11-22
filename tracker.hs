@@ -102,19 +102,25 @@ advance (taskName:amount:comment) = do
   removeFile tf
   renameFile tempName tf
 
-amend [taskName,('+':adj)] = do
+editTask :: String -> (Float -> Float) -> (Float -> Float) ->
+            (String -> String -> String -> String -> String) -> IO ()
+editTask taskName tgtProc curProc noteProc = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
   (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
   contents <- hGetContents handle
-  let (tgt:rest) = lines contents
-      tgt' = (read tgt :: Float) + (read adj :: Float)
-  hPutStr tempHandle $ unlines (((show tgt'):rest) 
-                                ++ ["0 Amend " ++ tgt ++ "->" ++ (show tgt')])
-  hClose handle
-  hClose tempHandle
-  removeFile tf
-  renameFile tempName tf
+  let (tgt:cur:updates) = lines contents
+      tgt' = show $ tgtProc (read tgt :: Float)
+      cur' = show $ curProc (read cur :: Float)
+  hPutStr tempHandle $ unlines $ (tgt':cur':updates)
+    ++ [noteProc tgt tgt' cur cur']
+
+amend [taskName,('+':adj)] = do
+  editTask 
+    taskName
+    id -- (\tgt -> ((+) (read adj :: Float))) --? why...
+    id
+    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
 amend [taskName,('-':adj)] = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
