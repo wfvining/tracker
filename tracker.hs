@@ -66,7 +66,7 @@ view (taskName:[]) = do
     contents <- readFile taskFile
     putStrLn $ summarize contents
   else putStrLn ""
-view [] = do viewAll
+view [] = viewAll
 
 -- Show a list of available tasks.
 -- An available task is on that resides in the current directory.
@@ -79,23 +79,20 @@ viewAll = do
       where getTasks = 
                 map (tail . (\f -> reverse . (drop 4) . reverse $ f))
                     . filter isTrackerFile
-            isTrackerFile ('.':fname) = if take 4 (reverse fname) == "rkt."
-                                        then True
-                                        else False
-            isTrackerFile fname       = False
+            isTrackerFile ('.':fname) = take 4 (reverse fname) == "rkt."
+            isTrackerFile _           = False
 
--- Note progress on a task, recording the new level of completion and
--- logging the change.
--- TODO: Add a timestamp.
-advance (taskName:amount:comment) = do
-  editTask
-    taskName
-    id
-    ((+) (read amount :: Float))
-    (\_ _ _ _ -> (amount ++ (' ':(unwords comment))))
-
+-- Edit a task. Takes four arguments:
+-- The task name
+-- A procedure that take the current number of sub-tasks and returns
+-- the new number of sub-tasks.
+-- A procedure that taked the current number of comletes sub-tasks
+-- and returns the new number of completed sub-tasks.
+-- A proocedure that takes the previous number of sub-tasks, the
+-- current number of sub-tasks and returns a record of the change.
+-- In the case of an advance this will be the comment.
 editTask :: String -> (Float -> Float) -> (Float -> Float) ->
-            (String -> String -> String -> String -> String) -> IO ()
+            (String -> String -> String) -> IO ()
 editTask taskName tgtProc curProc noteProc = do
   let tf = taskToFile taskName
   handle <- openFile tf ReadMode
@@ -105,30 +102,46 @@ editTask taskName tgtProc curProc noteProc = do
       tgt' = show $ tgtProc (read tgt :: Float)
       cur' = show $ curProc (read cur :: Float)
   hPutStr tempHandle $ unlines $ (tgt':cur':updates)
-    ++ [noteProc tgt tgt' cur cur']
+    ++ [noteProc tgt tgt']
   hClose handle
   hClose tempHandle
   removeFile tf
   renameFile tempName tf
 
-amend [taskName,('+':adj)] = do
+-- Note progress on a task, recording the new level of completion and
+-- logging the change.
+-- TODO: Add a timestamp.
+advance (taskName:amount:comment) =
+  editTask
+    taskName
+    id
+    ((+) (read amount :: Float))
+    (\_ _ -> (amount ++ (' ':(unwords comment))))
+
+-- Change the number of sub-tasks required for task completion.
+--
+-- The new number can be preceded by a '+' or '-' sign, indicating
+-- that the adjustment should be added or subtracted from the current
+-- number of sub-tasks. If there is no prefix, then the number of
+-- sub-tasks is replaced by the given adjustment.
+amend [taskName,('+':adj)] =
   editTask 
     taskName
     ((+) (read adj :: Float))
     id
-    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
-amend [taskName,('-':adj)] = do
+    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+amend [taskName,('-':adj)] =
   editTask
     taskName
     ((flip (-)) (read adj :: Float))
     id
-    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
-amend [taskName,newAmt] = do
+    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+amend [taskName,newAmt] =
   editTask
     taskName
     (\_ -> (read newAmt :: Float))
     id
-    (\tgt tgt' _ _ -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
 
 main = do
   args <- getArgs
