@@ -3,6 +3,7 @@
 import System.Environment
 import System.IO
 import System.Directory
+import Data.Time
 
 -- Tracker can do four things:
 -- "add" -> add a task.
@@ -98,11 +99,13 @@ editTask taskName tgtProc curProc noteProc = do
   handle <- openFile tf ReadMode
   (tempName, tempHandle) <- openTempFile "." (taskName ++ ".temp.tkr")
   contents <- hGetContents handle
+  d <- getCurrentTime
   let (tgt:cur:updates) = lines contents
       tgt' = show $ tgtProc (read tgt :: Float)
       cur' = show $ curProc (read cur :: Float)
+      date = show d
   hPutStr tempHandle $ unlines $ (tgt':cur':updates)
-    ++ [noteProc tgt tgt']
+    ++ [(noteProc tgt tgt') ++ " " ++ date]
   hClose handle
   hClose tempHandle
   removeFile tf
@@ -110,7 +113,6 @@ editTask taskName tgtProc curProc noteProc = do
 
 -- Note progress on a task, recording the new level of completion and
 -- logging the change.
--- TODO: Add a timestamp.
 advance (taskName:amount:comment) =
   editTask
     taskName
