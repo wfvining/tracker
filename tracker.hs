@@ -15,7 +15,9 @@ dispatch = [("add", add),
             ("remove", remove),
             ("view", view),
             ("advance", advance),
-            ("amend", amend)]
+            ("amend", amend),
+            ("undo", undo)
+           ]
 
 -- A task file name is "."++taskName++".tkr"
 taskToFile :: String -> String
@@ -111,6 +113,27 @@ editTask taskName tgtProc curProc noteProc = do
   removeFile tf
   renameFile tempName tf
 
+-- The very simplest of undo functionality. Currently only allows the
+-- undoing of a single previous change. Future functionality may
+-- include the ability to undo many previous changes.
+undo [taskName] = do
+  let tf = taskToFile taskName
+  handle <- openFile tf ReadMode
+  contents <- hGetContents handle
+  case (words (last $ lines contents)) of
+    ("Amend":was:_:is) -> 
+        editTask taskName
+                 (\_ -> (read was :: Float))
+                 id
+                 (\_ _ -> "Undo")
+    ("Undo":_) -> putStrLn "Cannot undo previous undo (for the time being)."
+    (adv:_) ->
+        editTask taskName
+                 id
+                 (flip (-) (read adv :: Float))
+                 (\_ _ -> "Undo")
+  hClose handle
+
 -- Note progress on a task, recording the new level of completion and
 -- logging the change.
 advance (taskName:amount:comment) =
@@ -131,19 +154,19 @@ amend [taskName,('+':adj)] =
     taskName
     ((+) (read adj :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 amend [taskName,('-':adj)] =
   editTask
     taskName
     ((flip (-)) (read adj :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 amend [taskName,newAmt] =
   editTask
     taskName
     (\_ -> (read newAmt :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 
 main = do
   args <- getArgs
