@@ -15,7 +15,9 @@ dispatch = [("add", add),
             ("remove", remove),
             ("view", view),
             ("advance", advance),
-            ("amend", amend)]
+            ("amend", amend)
+--            ("undo", undo)
+           ]
 
 -- A task file name is "."++taskName++".tkr"
 taskToFile :: String -> String
@@ -131,19 +133,19 @@ amend [taskName,('+':adj)] =
     taskName
     ((+) (read adj :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 amend [taskName,('-':adj)] =
   editTask
     taskName
     ((flip (-)) (read adj :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 amend [taskName,newAmt] =
   editTask
     taskName
     (\_ -> (read newAmt :: Float))
     id
-    (\tgt tgt' -> "0 Amend " ++ tgt ++ "->" ++ tgt')
+    (\tgt tgt' -> "Amend " ++ tgt ++ " -> " ++ tgt')
 
 main = do
   args <- getArgs
