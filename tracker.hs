@@ -16,8 +16,19 @@ dispatch = [("add", add),
             ("view", view),
             ("advance", advance),
             ("amend", amend),
-            ("undo", undo)
+            ("undo", undo),
+            ("help", help)
            ]
+
+help :: [String] -> IO ()
+help _ = do
+  putStrLn "add <task name> <number of sub-tasks>"
+  putStrLn "remove [-q] <task name>"
+  putStrLn "view [task name]"
+  putStrLn "advance <task name> <amount> <comment>"
+  putStrLn "amend <task name> <+adj|-adj|new amount>"
+  putStrLn "undo <task name>"
+  putStrLn "help"
 
 -- A task file name is "."++taskName++".tkr"
 taskToFile :: String -> String
